@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* Brand and palettes converted to CSS custom properties */
+:root {
+  /* brand color (OKLCH reference) */
+  --brand-base: var(--b-purple-lch);
+  --accent-base: var(--b-orange-lch);
+
+  /* Purple palette */
+  --b-purple-lch: oklch(70.86% 0.112 294.1);
+  --b-purple-50: #f5f3ff;
+  --b-purple-100: #e5dfff;
+  --b-purple-200: #d5caff;
+  --b-purple-300: #c5b5ff;
+  --b-purple-400: #b5a4f0;
+  --b-purple-500: #a593e0;
+  --b-purple-600: #8870cc;
+  --b-purple-700: #6442ac;
+  --b-purple-800: #420089;
+  --b-purple-900: #1f0046;
+
+  /* Orange palette */
+  --b-orange-lch: oklch(70.8% 0.112 51.8);
+  --b-orange-50: #fff2eb;
+  --b-orange-100: #ffdcc7;
+  --b-orange-200: #ffc4a1;
+  --b-orange-300: #faae80;
+  --b-orange-400: #e89d70;
+  --b-orange-500: #d88c5d;
+  --b-orange-600: #c16727;
+  --b-orange-700: #904400;
+  --b-orange-800: #582700;
+  --b-orange-900: #2b0f00;
+
+  /* Green palette */
+  --b-green-lch: oklch(70.8% 0.112 152.13);
+  --b-green-50: #dfffe6;
+  --b-green-100: #acf9c1;
+  --b-green-200: #9be8b0;
+  --b-green-300: #8bd69f;
+  --b-green-400: #7ac58f;
+  --b-green-500: #67b57e;
+  --b-green-600: #319a58;
+  --b-green-700: #006f37;
+  --b-green-800: #00431e;
+  --b-green-900: #001f0b;
+
+  /* Neutral / purple-grey palette from purple chroma */
+  --neutral-purple-lch: oklch(70.86% 0.03 294.1);
+  --neutral-50: #f5f3ff;
+  --neutral-100: #e4e0f7;
+  --neutral-200: #d3cfe6;
+  --neutral-300: #c3bed5;
+  --neutral-400: #b2aec4;
+  --neutral-500: #a29db5;
+  --neutral-600: #847ca4;
+  --neutral-700: #5f5287;
+  --neutral-800: #3b2768;
+  --neutral-900: #1f0046;
+
+  /* Blue palette */
+  --b-blue-lch: oklch(70.86% 0.112 265.5);
+  --b-blue-50: #f1f5ff;
+  --b-blue-100: #d7e4ff;
+  --b-blue-200: #bed3ff;
+  --b-blue-300: #a5c1ff;
+  --b-blue-400: #90b0f7;
+  --b-blue-500: #7f9fe7;
+  --b-blue-600: #5b7fd5;
+  --b-blue-700: #2f53b6;
+  --b-blue-800: #092094;
+  --b-blue-900: #020058;
+}
