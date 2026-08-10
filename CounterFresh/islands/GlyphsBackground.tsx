@@ -10,11 +10,27 @@ function randomChar() {
 const FONT_SIZE = 14;
 const COL_GAP = 22;
 
-// Brand-purple column tints
+// Brand OKLCH color tints matching root styles.css
+// Purple: oklch(70.86% 0.112 294.1), Blue: oklch(70.86% 0.112 265.5), Orange: oklch(70.8% 0.112 51.8)
 const TINTS = [
-  { head: "#e5dfff", mid: "#a593e0", dim: "#3b2768" },
-  { head: "#d7e4ff", mid: "#7f9fe7", dim: "#092094" },
-  { head: "#f5f3ff", mid: "#8870cc", dim: "#420089" },
+  {
+    head: "#ffffff",
+    glow: "rgba(229, 223, 255, 0.95)",
+    mid: (alpha: number) => `oklch(70.86% 0.112 294.1 / ${alpha})`,
+    dim: (alpha: number) => `oklch(35% 0.12 294.1 / ${alpha})`,
+  },
+  {
+    head: "#ffffff",
+    glow: "rgba(215, 228, 255, 0.95)",
+    mid: (alpha: number) => `oklch(70.86% 0.112 265.5 / ${alpha})`,
+    dim: (alpha: number) => `oklch(35% 0.12 265.5 / ${alpha})`,
+  },
+  {
+    head: "#ffffff",
+    glow: "rgba(255, 220, 195, 0.95)",
+    mid: (alpha: number) => `oklch(70.8% 0.112 51.8 / ${alpha})`,
+    dim: (alpha: number) => `oklch(35% 0.12 51.8 / ${alpha})`,
+  },
 ];
 
 interface Col {
@@ -43,13 +59,13 @@ function buildPatternCanvas(w: number, h: number): HTMLCanvasElement {
   oc.height = h;
   const c = oc.getContext("2d")!;
 
-  // Slightly lighter dark ground that will show through glows
-  c.fillStyle = "#1a0d3c";
+  // Dark ground matching --b-purple-900 / OKLCH theme
+  c.fillStyle = "oklch(15% 0.05 294.1)";
   c.fillRect(0, 0, w, h);
 
-  // Dot grid — Figma-canvas style
+  // Dot grid in brand OKLCH purple
   const DOT_GAP = 28;
-  c.fillStyle = "rgba(165,147,224,0.22)";
+  c.fillStyle = "oklch(70.86% 0.112 294.1 / 0.22)";
   for (let x = DOT_GAP; x < w; x += DOT_GAP) {
     for (let y = DOT_GAP; y < h; y += DOT_GAP) {
       c.beginPath();
@@ -58,7 +74,7 @@ function buildPatternCanvas(w: number, h: number): HTMLCanvasElement {
     }
   }
 
-  // Thin geometric frames — gives the Figma-Make "blueprint" feel
+  // Thin geometric frames — blueprint feel
   const rects = [
     { x: 0.08, y: 0.12, w: 0.22, h: 0.18 },
     { x: 0.38, y: 0.08, w: 0.28, h: 0.32 },
@@ -67,7 +83,7 @@ function buildPatternCanvas(w: number, h: number): HTMLCanvasElement {
     { x: 0.52, y: 0.6, w: 0.32, h: 0.22 },
     { x: 0.82, y: 0.62, w: 0.14, h: 0.3 },
   ];
-  c.strokeStyle = "rgba(136,112,204,0.18)";
+  c.strokeStyle = "oklch(60% 0.1 294.1 / 0.18)";
   c.lineWidth = 1;
   for (const r of rects) {
     c.strokeRect(r.x * w, r.y * h, r.w * w, r.h * h);
@@ -78,8 +94,8 @@ function buildPatternCanvas(w: number, h: number): HTMLCanvasElement {
     c.stroke();
   }
 
-  // Diagonal cross guides
-  c.strokeStyle = "rgba(91,127,213,0.09)";
+  // Diagonal cross guides in brand blue OKLCH
+  c.strokeStyle = "oklch(70.86% 0.112 265.5 / 0.09)";
   c.lineWidth = 0.5;
   c.beginPath();
   c.moveTo(0, 0);
@@ -129,20 +145,19 @@ export default function GlyphsBackground() {
 
       // ── 1. Dark overlay (builds up trail via partial erase) ──────────────
       ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "rgba(8, 5, 20, 0.28)";
+      ctx.fillStyle = "oklch(12% 0.04 294.1 / 0.28)";
       ctx.fillRect(0, 0, W, H);
 
       // ── 2. Punch holes in the dark layer using destination-out ────────────
-      //    This reveals the pattern canvas (behind) through the glows.
       ctx.globalCompositeOperation = "destination-out";
       for (const col of cols) {
         const headY = col.y;
 
-        // Large soft halo around the head glyph
-        const r = 56;
+        // Soft halo revealing the pattern canvas behind the head glyph
+        const r = 64;
         const grad = ctx.createRadialGradient(col.x, headY, 0, col.x, headY, r);
-        grad.addColorStop(0, "rgba(0,0,0,0.72)");
-        grad.addColorStop(0.55, "rgba(0,0,0,0.28)");
+        grad.addColorStop(0, "rgba(0,0,0,0.85)");
+        grad.addColorStop(0.5, "rgba(0,0,0,0.35)");
         grad.addColorStop(1, "rgba(0,0,0,0)");
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -152,7 +167,7 @@ export default function GlyphsBackground() {
 
       // ── 3. Draw the glyphs ────────────────────────────────────────────────
       ctx.globalCompositeOperation = "source-over";
-      ctx.font = `${FONT_SIZE}px "JetBrains Mono", monospace`;
+      ctx.font = `bold ${FONT_SIZE}px "JetBrains Mono", monospace`;
       ctx.textAlign = "center";
 
       for (const col of cols) {
@@ -166,25 +181,27 @@ export default function GlyphsBackground() {
           const frac = i / glyphs.length;
 
           if (i === 0) {
-            // Bright head with glow
-            ctx.shadowColor = tint.head;
-            ctx.shadowBlur = 12;
-            ctx.fillStyle = tint.head;
+            // Intense head glow: render drop shadow + pure white core
+            ctx.shadowColor = tint.glow;
+            ctx.shadowBlur = 18;
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(glyphs[i], col.x, cy);
+
+            // Double pass for extra vibrancy
+            ctx.shadowBlur = 8;
+            ctx.fillText(glyphs[i], col.x, cy);
+            ctx.shadowBlur = 0;
           } else if (frac < 0.35) {
             ctx.shadowBlur = 0;
-            const alpha = Math.round((1 - frac / 0.35) * 200).toString(16)
-              .padStart(2, "0");
-            ctx.fillStyle = tint.mid + alpha;
+            const alpha = (1 - frac / 0.35) * 0.85;
+            ctx.fillStyle = tint.mid(alpha);
+            ctx.fillText(glyphs[i], col.x, cy);
           } else {
             ctx.shadowBlur = 0;
-            const alpha = Math.round((1 - (frac - 0.35) / 0.65) * 90).toString(
-              16,
-            ).padStart(2, "0");
-            ctx.fillStyle = tint.dim + alpha;
+            const alpha = (1 - (frac - 0.35) / 0.65) * 0.4;
+            ctx.fillStyle = tint.dim(alpha);
+            ctx.fillText(glyphs[i], col.x, cy);
           }
-
-          ctx.fillText(glyphs[i], col.x, cy);
-          ctx.shadowBlur = 0;
         }
 
         // Advance
@@ -239,13 +256,14 @@ export default function GlyphsBackground() {
     <div
       style={{
         position: "fixed",
-        pointerEvents: "none",
-        inset: "0",
-        zIndex: "-100",
+        top: 0,
+        left: 0,
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
-        backgroundColor: "#080514",
+        backgroundColor: "oklch(12% 0.04 294.1)",
+        zIndex: -1,
+        pointerEvents: "none",
       }}
     >
       {/* Layer 1 — revealed pattern (dot grid + geometry) */}
