@@ -1,282 +1,330 @@
 import { useEffect, useRef } from "preact/hooks";
 
-// Counter/math chars only — decimals + operators
-const CHARS = "0123456789+-><=";
+// ── 1. Configuration & Design Constants ───────────────────────────────────────
+const CONFIG = {
+  font: {
+    size: 14,
+    rowPadding: 4,
+    get rowHeight() {
+      return this.size + this.rowPadding;
+    },
+    family: '"JetBrains Mono", monospace',
+  },
+  grid: {
+    columnGap: 22,
+    dotGap: 28,
+    dotRadius: 1.1,
+  },
+  column: {
+    minLength: 10,
+    lengthVariance: 18,
+    minSpeed: 0.7,
+    speedVariance: 1.6,
+    flickerChance: 0.07,
+  },
+  effects: {
+    trailFadeOpacity: 0.28,
+    spotlightRadius: 64,
+    headGlowPrimary: 18,
+    headGlowSecondary: 8,
+    brightTrailRatio: 0.35,
+    maxMidAlpha: 0.85,
+    maxDimAlpha: 0.40,
+  },
+  themeDefaults: {
+    purpleLch: "oklch(70.86% 0.112 294.1)",
+    blueLch: "oklch(70.86% 0.112 265.5)",
+    orangeLch: "oklch(70.8% 0.112 51.8)",
+    purple800: "oklch(35% 0.12 294.1)",
+    blue800: "oklch(35% 0.12 265.5)",
+    orange800: "oklch(35% 0.12 51.8)",
+    darkBg: "#1f0046",
+    purple100: "#e5dfff",
+    blue100: "#d7e4ff",
+    orange100: "#ffdcc7",
+  },
+} as const;
 
-function randomChar() {
-  return CHARS[Math.floor(Math.random() * CHARS.length)];
+// Math symbols & numeric glyphs
+const GLYPH_CHARS = "0123456789+-><=";
+
+// Normalized relative coordinates for blueprint geometric frames
+const BLUEPRINT_RECTS = [
+  { x: 0.08, y: 0.12, w: 0.22, h: 0.18 },
+  { x: 0.38, y: 0.08, w: 0.28, h: 0.32 },
+  { x: 0.72, y: 0.18, w: 0.20, h: 0.24 },
+  { x: 0.14, y: 0.55, w: 0.18, h: 0.28 },
+  { x: 0.52, y: 0.60, w: 0.32, h: 0.22 },
+  { x: 0.82, y: 0.62, w: 0.14, h: 0.30 },
+] as const;
+
+// ── 2. Utility Helpers ────────────────────────────────────────────────────────
+function getRandomChar(): string {
+  return GLYPH_CHARS[Math.floor(Math.random() * GLYPH_CHARS.length)];
 }
 
-const FONT_SIZE = 14;
-const COL_GAP = 22;
+function getThemeVar(name: string, fallback: string): string {
+  if (typeof document === "undefined") return fallback;
+  const val = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return val || fallback;
+}
 
-// Brand OKLCH color tints matching root styles.css
-// Purple: oklch(70.86% 0.112 294.1), Blue: oklch(70.86% 0.112 265.5), Orange: oklch(70.8% 0.112 51.8)
-const TINTS = [
-  {
-    head: "#ffffff",
-    glow: "rgba(229, 223, 255, 0.95)",
-    mid: (alpha: number) => `oklch(70.86% 0.112 294.1 / ${alpha})`,
-    dim: (alpha: number) => `oklch(35% 0.12 294.1 / ${alpha})`,
-  },
-  {
-    head: "#ffffff",
-    glow: "rgba(215, 228, 255, 0.95)",
-    mid: (alpha: number) => `oklch(70.86% 0.112 265.5 / ${alpha})`,
-    dim: (alpha: number) => `oklch(35% 0.12 265.5 / ${alpha})`,
-  },
-  {
-    head: "#ffffff",
-    glow: "rgba(255, 220, 195, 0.95)",
-    mid: (alpha: number) => `oklch(70.8% 0.112 51.8 / ${alpha})`,
-    dim: (alpha: number) => `oklch(35% 0.12 51.8 / ${alpha})`,
-  },
-];
+function withAlpha(colorStr: string, alpha: number): string {
+  const clean = colorStr.trim();
+  if (clean.startsWith("oklch(")) {
+    return clean.replace(/\)$/, ` / ${alpha})`);
+  }
+  return clean;
+}
 
-interface Col {
+// ── 3. Theme Tint Color Palette Setup ─────────────────────────────────────────
+function getThemeTints() {
+  const { themeDefaults } = CONFIG;
+  const purpleLch = getThemeVar("--purple-lch", themeDefaults.purpleLch);
+  const blueLch = getThemeVar("--blue-lch", themeDefaults.blueLch);
+  const orangeLch = getThemeVar("--orange-lch", themeDefaults.orangeLch);
+
+  const purple100 = getThemeVar("--purple-100", themeDefaults.purple100);
+  const blue100 = getThemeVar("--blue-100", themeDefaults.blue100);
+  const orange100 = getThemeVar("--orange-100", themeDefaults.orange100);
+
+  return [
+    {
+      head: "#ffffff",
+      glow: purple100,
+      mid: (alpha: number) => withAlpha(purpleLch, alpha),
+      dim: (alpha: number) => withAlpha(themeDefaults.purple800, alpha),
+    },
+    {
+      head: "#ffffff",
+      glow: blue100,
+      mid: (alpha: number) => withAlpha(blueLch, alpha),
+      dim: (alpha: number) => withAlpha(themeDefaults.blue800, alpha),
+    },
+    {
+      head: "#ffffff",
+      glow: orange100,
+      mid: (alpha: number) => withAlpha(orangeLch, alpha),
+      dim: (alpha: number) => withAlpha(themeDefaults.orange800, alpha),
+    },
+  ];
+}
+
+type TintScheme = ReturnType<typeof getThemeTints>[number];
+
+interface ColumnState {
   x: number;
   y: number;
   speed: number;
   glyphs: string[];
-  tint: (typeof TINTS)[number];
+  tint: TintScheme;
 }
 
-function makeCol(x: number, h: number): Col {
-  const len = 10 + Math.floor(Math.random() * 18);
+function createColumn(x: number, tints: TintScheme[]): ColumnState {
+  const { minLength, lengthVariance, minSpeed, speedVariance } = CONFIG.column;
+  const length = minLength + Math.floor(Math.random() * lengthVariance);
+
   return {
     x,
-    y: -(len * (FONT_SIZE + 4)) * Math.random(),
-    speed: 0.7 + Math.random() * 1.6,
-    glyphs: Array.from({ length: len }, randomChar),
-    tint: TINTS[Math.floor(Math.random() * TINTS.length)],
+    y: -(length * CONFIG.font.rowHeight) * Math.random(),
+    speed: minSpeed + Math.random() * speedVariance,
+    glyphs: Array.from({ length }, getRandomChar),
+    tint: tints[Math.floor(Math.random() * tints.length)],
   };
 }
 
-// Draw the static reveal-pattern onto an offscreen canvas
+// ── 4. Blueprint Pattern Generator (Offscreen Canvas) ────────────────────────
 function buildPatternCanvas(w: number, h: number): HTMLCanvasElement {
-  const oc = document.createElement("canvas");
-  oc.width = w;
-  oc.height = h;
-  const c = oc.getContext("2d")!;
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d")!;
 
-  // Dark ground matching --b-purple-900 / OKLCH theme
-  c.fillStyle = "oklch(15% 0.05 294.1)";
-  c.fillRect(0, 0, w, h);
+  const { themeDefaults, grid } = CONFIG;
+  const darkBg = getThemeVar("--neutral-900", themeDefaults.darkBg);
+  const purpleLch = getThemeVar("--purple-lch", themeDefaults.purpleLch);
+  const blueLch = getThemeVar("--blue-lch", themeDefaults.blueLch);
 
-  // Dot grid in brand OKLCH purple
-  const DOT_GAP = 28;
-  c.fillStyle = "oklch(70.86% 0.112 294.1 / 0.22)";
-  for (let x = DOT_GAP; x < w; x += DOT_GAP) {
-    for (let y = DOT_GAP; y < h; y += DOT_GAP) {
-      c.beginPath();
-      c.arc(x, y, 1.1, 0, Math.PI * 2);
-      c.fill();
+  // Background Ground
+  ctx.fillStyle = darkBg.startsWith("oklch") ? darkBg : "oklch(15% 0.05 294.1)";
+  ctx.fillRect(0, 0, w, h);
+
+  // Dot Grid
+  ctx.fillStyle = withAlpha(purpleLch, 0.22);
+  for (let x = grid.dotGap; x < w; x += grid.dotGap) {
+    for (let y = grid.dotGap; y < h; y += grid.dotGap) {
+      ctx.beginPath();
+      ctx.arc(x, y, grid.dotRadius, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
-  // Thin geometric frames — blueprint feel
-  const rects = [
-    { x: 0.08, y: 0.12, w: 0.22, h: 0.18 },
-    { x: 0.38, y: 0.08, w: 0.28, h: 0.32 },
-    { x: 0.72, y: 0.18, w: 0.2, h: 0.24 },
-    { x: 0.14, y: 0.55, w: 0.18, h: 0.28 },
-    { x: 0.52, y: 0.6, w: 0.32, h: 0.22 },
-    { x: 0.82, y: 0.62, w: 0.14, h: 0.3 },
-  ];
-  c.strokeStyle = "oklch(60% 0.1 294.1 / 0.18)";
-  c.lineWidth = 1;
-  for (const r of rects) {
-    c.strokeRect(r.x * w, r.y * h, r.w * w, r.h * h);
-    // inner label line
-    c.beginPath();
-    c.moveTo(r.x * w + 4, r.y * h + 12);
-    c.lineTo((r.x + r.w) * w - 4, r.y * h + 12);
-    c.stroke();
+  // Geometric Frames
+  ctx.strokeStyle = withAlpha(purpleLch, 0.18);
+  ctx.lineWidth = 1;
+  for (const rect of BLUEPRINT_RECTS) {
+    const rx = rect.x * w;
+    const ry = rect.y * h;
+    const rw = rect.w * w;
+    const rh = rect.h * h;
+
+    ctx.strokeRect(rx, ry, rw, rh);
+    ctx.beginPath();
+    ctx.moveTo(rx + 4, ry + 12);
+    ctx.lineTo(rx + rw - 4, ry + 12);
+    ctx.stroke();
   }
 
-  // Diagonal cross guides in brand blue OKLCH
-  c.strokeStyle = "oklch(70.86% 0.112 265.5 / 0.09)";
-  c.lineWidth = 0.5;
-  c.beginPath();
-  c.moveTo(0, 0);
-  c.lineTo(w, h);
-  c.moveTo(w, 0);
-  c.lineTo(0, h);
-  c.stroke();
+  // Diagonal Cross Guides
+  ctx.strokeStyle = withAlpha(blueLch, 0.09);
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(w, h);
+  ctx.moveTo(w, 0);
+  ctx.lineTo(0, h);
+  ctx.stroke();
 
-  return oc;
+  return canvas;
 }
 
+// ── 5. Main Component ─────────────────────────────────────────────────────────
 export default function GlyphsBackground() {
   const patternRef = useRef<HTMLCanvasElement>(null);
   const mainRef = useRef<HTMLCanvasElement>(null);
-  const patternOC = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const mainCanvas = mainRef.current!;
-    const ctx = mainCanvas.getContext("2d")!;
+    const patternCanvas = patternRef.current!;
+    const mainCtx = mainCanvas.getContext("2d")!;
+    const patternCtx = patternCanvas.getContext("2d")!;
 
     let animId: number;
-    let cols: Col[] = [];
+    let columns: ColumnState[] = [];
+    const tints = getThemeTints();
 
-    const resize = () => {
+    const handleResize = () => {
       const W = window.innerWidth;
       const H = window.innerHeight;
+
       mainCanvas.width = W;
       mainCanvas.height = H;
+      patternCanvas.width = W;
+      patternCanvas.height = H;
 
-      if (patternRef.current) {
-        patternRef.current.width = W;
-        patternRef.current.height = H;
-      }
+      // Build static offscreen pattern and draw ONCE on resize (avoids wasteful per-frame redraws)
+      const offscreenPattern = buildPatternCanvas(W, H);
+      patternCtx.clearRect(0, 0, W, H);
+      patternCtx.drawImage(offscreenPattern, 0, 0);
 
-      patternOC.current = buildPatternCanvas(W, H);
-
-      const numCols = Math.ceil(W / COL_GAP);
-      cols = Array.from(
+      // Re-initialize columns
+      const numCols = Math.ceil(W / CONFIG.grid.columnGap);
+      columns = Array.from(
         { length: numCols },
-        (_, i) => makeCol(i * COL_GAP + COL_GAP / 2, H),
+        (_, i) => createColumn(i * CONFIG.grid.columnGap + CONFIG.grid.columnGap / 2, tints),
       );
     };
 
-    const tick = () => {
+    const renderFrame = () => {
       const W = mainCanvas.width;
       const H = mainCanvas.height;
+      const { font, effects, column: colConfig } = CONFIG;
 
-      // ── 1. Dark overlay (builds up trail via partial erase) ──────────────
-      ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "oklch(12% 0.04 294.1 / 0.28)";
-      ctx.fillRect(0, 0, W, H);
+      // Step 1: Motion Trail Partial Erase
+      mainCtx.globalCompositeOperation = "source-over";
+      mainCtx.fillStyle = `oklch(12% 0.04 294.1 / ${effects.trailFadeOpacity})`;
+      mainCtx.fillRect(0, 0, W, H);
 
-      // ── 2. Punch holes in the dark layer using destination-out ────────────
-      ctx.globalCompositeOperation = "destination-out";
-      for (const col of cols) {
-        const headY = col.y;
-
-        // Soft halo revealing the pattern canvas behind the head glyph
-        const r = 64;
-        const grad = ctx.createRadialGradient(col.x, headY, 0, col.x, headY, r);
+      // Step 2: Spotlight Hole Punching (Erases dark layer around lead glyph)
+      mainCtx.globalCompositeOperation = "destination-out";
+      for (const col of columns) {
+        const radius = effects.spotlightRadius;
+        const grad = mainCtx.createRadialGradient(col.x, col.y, 0, col.x, col.y, radius);
         grad.addColorStop(0, "rgba(0,0,0,0.85)");
         grad.addColorStop(0.5, "rgba(0,0,0,0.35)");
         grad.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(col.x, headY, r, 0, Math.PI * 2);
-        ctx.fill();
+
+        mainCtx.fillStyle = grad;
+        mainCtx.beginPath();
+        mainCtx.arc(col.x, col.y, radius, 0, Math.PI * 2);
+        mainCtx.fill();
       }
 
-      // ── 3. Draw the glyphs ────────────────────────────────────────────────
-      ctx.globalCompositeOperation = "source-over";
-      ctx.font = `bold ${FONT_SIZE}px "JetBrains Mono", monospace`;
-      ctx.textAlign = "center";
+      // Step 3: Render Glyphs
+      mainCtx.globalCompositeOperation = "source-over";
+      mainCtx.font = `bold ${font.size}px ${font.family}`;
+      mainCtx.textAlign = "center";
 
-      for (const col of cols) {
+      for (const col of columns) {
         const { glyphs, tint } = col;
-        const rowH = FONT_SIZE + 4;
 
         for (let i = 0; i < glyphs.length; i++) {
-          const cy = col.y + i * rowH;
-          if (cy < -rowH || cy > H + rowH) continue;
+          const cy = col.y + i * font.rowHeight;
+          if (cy < -font.rowHeight || cy > H + font.rowHeight) continue;
 
           const frac = i / glyphs.length;
 
           if (i === 0) {
-            // Intense head glow: render drop shadow + pure white core
-            ctx.shadowColor = tint.glow;
-            ctx.shadowBlur = 18;
-            ctx.fillStyle = "#ffffff";
-            ctx.fillText(glyphs[i], col.x, cy);
+            // Head Glyph Neon Glow
+            mainCtx.shadowColor = tint.glow;
+            mainCtx.shadowBlur = effects.headGlowPrimary;
+            mainCtx.fillStyle = tint.head;
+            mainCtx.fillText(glyphs[i], col.x, cy);
 
-            // Double pass for extra vibrancy
-            ctx.shadowBlur = 8;
-            ctx.fillText(glyphs[i], col.x, cy);
-            ctx.shadowBlur = 0;
-          } else if (frac < 0.35) {
-            ctx.shadowBlur = 0;
-            const alpha = (1 - frac / 0.35) * 0.85;
-            ctx.fillStyle = tint.mid(alpha);
-            ctx.fillText(glyphs[i], col.x, cy);
+            mainCtx.shadowBlur = effects.headGlowSecondary;
+            mainCtx.fillText(glyphs[i], col.x, cy);
+            mainCtx.shadowBlur = 0;
+          } else if (frac < effects.brightTrailRatio) {
+            mainCtx.shadowBlur = 0;
+            const alpha = (1 - frac / effects.brightTrailRatio) * effects.maxMidAlpha;
+            mainCtx.fillStyle = tint.mid(alpha);
+            mainCtx.fillText(glyphs[i], col.x, cy);
           } else {
-            ctx.shadowBlur = 0;
-            const alpha = (1 - (frac - 0.35) / 0.65) * 0.4;
-            ctx.fillStyle = tint.dim(alpha);
-            ctx.fillText(glyphs[i], col.x, cy);
+            mainCtx.shadowBlur = 0;
+            const alpha = (1 - (frac - effects.brightTrailRatio) / (1 - effects.brightTrailRatio)) * effects.maxDimAlpha;
+            mainCtx.fillStyle = tint.dim(alpha);
+            mainCtx.fillText(glyphs[i], col.x, cy);
           }
         }
 
-        // Advance
+        // Advance column
         col.y += col.speed;
 
-        // Flicker
-        if (Math.random() < 0.07) {
-          col.glyphs[Math.floor(Math.random() * glyphs.length)] = randomChar();
+        // Random character flicker
+        if (Math.random() < colConfig.flickerChance) {
+          col.glyphs[Math.floor(Math.random() * glyphs.length)] = getRandomChar();
         }
 
-        // Reset
-        if (col.y > H + glyphs.length * (FONT_SIZE + 4)) {
-          const nc = makeCol(col.x, H);
-          col.y = nc.y;
-          col.speed = nc.speed;
-          col.glyphs = nc.glyphs;
-          col.tint = nc.tint;
+        // Reset column when past bottom boundary
+        if (col.y > H + glyphs.length * font.rowHeight) {
+          const newCol = createColumn(col.x, tints);
+          col.y = newCol.y;
+          col.speed = newCol.speed;
+          col.glyphs = newCol.glyphs;
+          col.tint = newCol.tint;
         }
       }
 
-      animId = requestAnimationFrame(tick);
+      animId = requestAnimationFrame(renderFrame);
     };
 
-    resize();
-    window.addEventListener("resize", resize);
-    animId = requestAnimationFrame(tick);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    animId = requestAnimationFrame(renderFrame);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", handleResize);
     };
-  }, []);
-
-  // Sync pattern offscreen canvas to the visible pattern canvas
-  useEffect(() => {
-    const pc = patternRef.current!;
-    const pCtx = pc.getContext("2d")!;
-
-    const drawPattern = () => {
-      if (patternOC.current) {
-        pCtx.clearRect(0, 0, pc.width, pc.height);
-        pCtx.drawImage(patternOC.current, 0, 0);
-      }
-      requestAnimationFrame(drawPattern);
-    };
-
-    const id = requestAnimationFrame(drawPattern);
-    return () => cancelAnimationFrame(id);
   }, []);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        overflow: "hidden",
-        backgroundColor: "oklch(12% 0.04 294.1)",
-        zIndex: -1,
-        pointerEvents: "none",
-      }}
-    >
-      {/* Layer 1 — revealed pattern (dot grid + geometry) */}
-      <canvas
-        ref={patternRef}
-        style={{ position: "absolute", inset: 0, display: "block" }}
-      />
+    <div class="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10 pointer-events-none bg-neutral-900">
+      {/* Layer 1 — Revealed blueprint pattern */}
+      <canvas ref={patternRef} class="absolute inset-0 block" />
 
-      {/* Layer 2 — animated dark overlay with glow holes + glyphs */}
-      <canvas
-        ref={mainRef}
-        style={{ position: "absolute", inset: 0, display: "block" }}
-      />
+      {/* Layer 2 — Animated trails & glyphs */}
+      <canvas ref={mainRef} class="absolute inset-0 block" />
     </div>
   );
 }
