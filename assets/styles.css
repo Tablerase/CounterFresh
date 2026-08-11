@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+@import "tailwindcss";
+
+.righteous-regular {
+  font-family: "Righteous", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Tailwind v4 Theme Configuration ─────────────────────────────────────── */
+@theme {
+  /* Brand Shortcuts */
+  --color-brand-base: var(--purple-lch);
+  --color-accent-base: var(--orange-lch);
+
+  /* Fonts */
+  --font-title: "Righteous", sans-serif;
+
+  /* Purple Palette -> bg-purple-*, text-purple-*, border-purple-* */
+  --color-purple-lch: oklch(70.86% 0.112 294.1);
+  --color-purple-50: #f5f3ff;
+  --color-purple-100: #e5dfff;
+  --color-purple-200: #d5caff;
+  --color-purple-300: #c5b5ff;
+  --color-purple-400: #b5a4f0;
+  --color-purple-500: #a593e0;
+  --color-purple-600: #8870cc;
+  --color-purple-700: #6442ac;
+  --color-purple-800: #420089;
+  --color-purple-900: #1f0046;
+
+  /* Orange Palette -> bg-orange-*, text-orange-* */
+  --color-orange-lch: oklch(70.8% 0.112 51.8);
+  --color-orange-50: #fff2eb;
+  --color-orange-100: #ffdcc7;
+  --color-orange-200: #ffc4a1;
+  --color-orange-300: #faae80;
+  --color-orange-400: #e89d70;
+  --color-orange-500: #d88c5d;
+  --color-orange-600: #c16727;
+  --color-orange-700: #904400;
+  --color-orange-800: #582700;
+  --color-orange-900: #2b0f00;
+
+  /* Green Palette -> bg-green-*, text-green-* */
+  --color-green-lch: oklch(70.8% 0.112 152.13);
+  --color-green-50: #dfffe6;
+  --color-green-100: #acf9c1;
+  --color-green-200: #9be8b0;
+  --color-green-300: #8bd69f;
+  --color-green-400: #7ac58f;
+  --color-green-500: #67b57e;
+  --color-green-600: #319a58;
+  --color-green-700: #006f37;
+  --color-green-800: #00431e;
+  --color-green-900: #001f0b;
+
+  /* Neutral Palette -> bg-neutral-*, text-neutral-* */
+  --color-neutral-purple-lch: oklch(70.86% 0.03 294.1);
+  --color-neutral-50: #f5f3ff;
+  --color-neutral-100: #e4e0f7;
+  --color-neutral-200: #d3cfe6;
+  --color-neutral-300: #c3bed5;
+  --color-neutral-400: #b2aec4;
+  --color-neutral-500: #a29db5;
+  --color-neutral-600: #847ca4;
+  --color-neutral-700: #5f5287;
+  --color-neutral-800: #3b2768;
+  --color-neutral-900: #1f0046;
+
+  /* Blue Palette -> bg-blue-*, text-blue-* */
+  --color-blue-lch: oklch(70.86% 0.112 265.5);
+  --color-blue-50: #f1f5ff;
+  --color-blue-100: #d7e4ff;
+  --color-blue-200: #bed3ff;
+  --color-blue-300: #a5c1ff;
+  --color-blue-400: #90b0f7;
+  --color-blue-500: #7f9fe7;
+  --color-blue-600: #5b7fd5;
+  --color-blue-700: #2f53b6;
+  --color-blue-800: #092094;
+  --color-blue-900: #020058;
+}
+
+/* ── Backward Compatibility CSS Custom Properties ────────────────────────── */
+:root {
+  --brand-base: var(--color-brand-base);
+  --accent-base: var(--color-accent-base);
+
+  --purple-lch: var(--color-purple-lch);
+  --purple-50: var(--color-purple-50);
+  --purple-100: var(--color-purple-100);
+  --purple-200: var(--color-purple-200);
+  --purple-300: var(--color-purple-300);
+  --purple-400: var(--color-purple-400);
+  --purple-500: var(--color-purple-500);
+  --purple-600: var(--color-purple-600);
+  --purple-700: var(--color-purple-700);
+  --purple-800: var(--color-purple-800);
+  --purple-900: var(--color-purple-900);
+
+  --orange-lch: var(--color-orange-lch);
+  --orange-50: var(--color-orange-50);
+  --orange-100: var(--color-orange-100);
+  --orange-200: var(--color-orange-200);
+  --orange-300: var(--color-orange-300);
+  --orange-400: var(--color-orange-400);
+  --orange-500: var(--color-orange-500);
+  --orange-600: var(--color-orange-600);
+  --orange-700: var(--color-orange-700);
+  --orange-800: var(--color-orange-800);
+  --orange-900: var(--color-orange-900);
+
+  --green-lch: var(--color-green-lch);
+  --green-50: var(--color-green-50);
+  --green-100: var(--color-green-100);
+  --green-200: var(--color-green-200);
+  --green-300: var(--color-green-300);
+  --green-400: var(--color-green-400);
+  --green-500: var(--color-green-500);
+  --green-600: var(--color-green-600);
+  --green-700: var(--color-green-700);
+  --green-800: var(--color-green-800);
+  --green-900: var(--color-green-900);
+
+  --neutral-purple-lch: var(--color-neutral-purple-lch);
+  --neutral-50: var(--color-neutral-50);
+  --neutral-100: var(--color-neutral-100);
+  --neutral-200: var(--color-neutral-200);
+  --neutral-300: var(--color-neutral-300);
+  --neutral-400: var(--color-neutral-400);
+  --neutral-500: var(--color-neutral-500);
+  --neutral-600: var(--color-neutral-600);
+  --neutral-700: var(--color-neutral-700);
+  --neutral-800: var(--color-neutral-800);
+  --neutral-900: var(--color-neutral-900);
+
+  --blue-lch: var(--color-blue-lch);
+  --blue-50: var(--color-blue-50);
+  --blue-100: var(--color-blue-100);
+  --blue-200: var(--color-blue-200);
+  --blue-300: var(--color-blue-300);
+  --blue-400: var(--color-blue-400);
+  --blue-500: var(--color-blue-500);
+  --blue-600: var(--color-blue-600);
+  --blue-700: var(--color-blue-700);
+  --blue-800: var(--color-blue-800);
+  --blue-900: var(--color-blue-900);
+}
