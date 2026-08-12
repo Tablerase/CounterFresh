@@ -21,7 +21,7 @@ export default function ParticipantList() {
   // Track current display order for stable tie-breaking
   const currentSortedRef = useRef<ParticipantItem[]>([]);
 
-  // ✅ Sorts cards by score descending. On equal scores, keeps current display order (no swap on ties!)
+  // Sorts cards by score descending. On equal scores, keeps current display order (no swap on ties!)
   const sortedParticipants = useComputed(() => {
     const items = [...participantItems.value];
 
@@ -54,6 +54,12 @@ export default function ParticipantList() {
       count: signal(0),
     };
     participantItems.value = [...participantItems.value, newParticipant];
+  }
+
+  function removeParticipant(id: string) {
+    participantItems.value = participantItems.value.filter((item) =>
+      item.id !== id
+    );
   }
 
   const positionsRef = useRef<Map<string, DOMRect>>(new Map());
@@ -116,12 +122,17 @@ export default function ParticipantList() {
             class="will-change-transform"
           >
             {/* TODO: Add background gradient based on position */}
-            <Participant participant={element} />
+            <Participant
+              participant={element}
+              showRemove={sortedParticipants.value.length > 1}
+              onRemove={() => removeParticipant(element.id)}
+            />
           </div>
         ))}
       </div>
       <Button
         id="addParticipant"
+        title="Add Participant"
         onClick={addParticipant}
         class="font-bold text-6xl text-neutral-50"
       >

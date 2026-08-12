@@ -1,15 +1,30 @@
 import Counter from "@/islands/Counter.tsx";
 import Surface from "@/components/Surface.tsx";
+import DeleteIcon from "@/components/DeleteIcon/DeleteIcon.tsx";
 import { useId } from "preact/hooks";
 import { ParticipantItem } from "@/islands/ParticipantList.tsx";
 
 export interface ParticipantProps {
   participant: ParticipantItem;
+  showRemove?: boolean;
+  onRemove?: () => void;
 }
 
-export default function Participant({ participant }: ParticipantProps) {
+export default function Participant(
+  { participant, showRemove = false, onRemove }: ParticipantProps,
+) {
   return (
-    <Surface>
+    <Surface class="relative">
+      {showRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          class="absolute right-3 top-3 text-purple-400/60 hover:text-red-400 hover:scale-150 font-bold text-sm p-1 rounded transition-transform cursor-pointer"
+          title="Remove Participant"
+        >
+          <DeleteIcon />
+        </button>
+      )}
       <input
         id={useId()}
         type="text"

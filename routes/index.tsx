@@ -1,7 +1,6 @@
 import { Head } from "fresh/runtime";
 import { define } from "../utils.ts";
 import GlyphsBackground from "@/islands/GlyphsBackground.tsx";
-import Participant from "@/islands/Participant.tsx";
 import ParticipantList from "@/islands/ParticipantList.tsx";
 
 export default define.page(
