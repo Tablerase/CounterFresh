@@ -16,12 +16,6 @@ export default function Counter(props: CounterProps) {
       <div class="flex justify-end">
         <Button
           id="decrement"
-          class="inline-flex items-center justify-center 
-      w-14 h-14 sm:w-16 sm:h-16 rounded-full 
-      bg-[oklch(from_var(--neutral-purple-lch)_calc(l-0.4)_c_h)] 
-      hover:bg-[oklch(from_var(--neutral-purple-lch)_calc(l-0.4)_calc(c+0.05)_h)] 
-      border border-purple-600/40 hover:border-purple-400 
-      text-white transition-all duration-300 shadow-lg active:scale-95 cursor-pointer"
           onClick={() => {
             props.count.value -= 1;
           }}
@@ -41,12 +35,6 @@ export default function Counter(props: CounterProps) {
       <div class="flex justify-start">
         <Button
           id="increment"
-          class="inline-flex items-center justify-center 
-      w-14 h-14 sm:w-16 sm:h-16 rounded-full 
-      bg-[oklch(from_var(--neutral-purple-lch)_calc(l-0.4)_c_h)] 
-      hover:bg-[oklch(from_var(--neutral-purple-lch)_calc(l-0.4)_calc(c+0.05)_h)] 
-      border border-purple-600/40 hover:border-purple-400 
-      text-white transition-all duration-300 shadow-lg active:scale-95 cursor-pointer"
           onClick={() => {
             props.count.value += 1;
           }}

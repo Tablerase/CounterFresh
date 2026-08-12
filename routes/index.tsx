@@ -2,6 +2,7 @@ import { Head } from "fresh/runtime";
 import { define } from "../utils.ts";
 import GlyphsBackground from "@/islands/GlyphsBackground.tsx";
 import Participant from "@/islands/Participant.tsx";
+import ParticipantList from "@/islands/ParticipantList.tsx";
 
 export default define.page(
   function Home(ctx) {
@@ -16,9 +17,7 @@ export default define.page(
         <h1 class="text-6xl text-center drop-shadow-2xl drop-shadow-purple-400 font-bold font-title m-5 justify-self-center max-inline-screen">
           Counter Fresh
         </h1>
-        <div class="relative z-10 max-w-screen-md mx-auto flex flex-col items-center justify-center min-h-[70vh]">
-          <Participant />
-        </div>
+        <ParticipantList />
       </div>
     );
   },
