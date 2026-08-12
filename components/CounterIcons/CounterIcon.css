@@ -1,6 +1,6 @@
 :root {
-  --minus-color: var(--color-blue-300, #a5c1ff);
-  --plus-color: var(--color-purple-300, #c5b5ff);
+  --plus-color: var(--color-blue-300, #a5c1ff);
+  --minus-color: var(--color-purple-300, #c5b5ff);
 }
 
 /* Minus */

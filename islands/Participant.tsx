@@ -14,7 +14,8 @@ export default function Participant() {
         type="text"
         value={name}
         placeholder="Name"
-        class={`text-center font-mono text-2xl font-bold text-purple-100 tracking-wider mb-2`}
+        autocapitalize="sentences"
+        class={`capitalize text-center align-middle items-center font-mono text-2xl font-bold text-purple-200 tracking-wider mb-2`}
       />
       <Counter count={count} />
       {
