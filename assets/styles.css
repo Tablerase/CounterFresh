@@ -8,10 +8,17 @@
 }
 
 /* ── Tailwind v4 Theme Configuration ─────────────────────────────────────── */
+/* 
+ * Tailwind class custom usage:
+ * bg-[oklch(from_var(--neutral-purple-lch)_calc(l-0.5)_c_h)]
+ * */
+
 @theme {
   /* Brand Shortcuts */
   --color-brand-base: var(--purple-lch);
   --color-accent-base: var(--orange-lch);
+
+  --color-surface-base: oklch(from var(--neutral-purple-lch) calc(l-0.5) c h);
 
   /* Fonts */
   --font-title: "Righteous", sans-serif;
