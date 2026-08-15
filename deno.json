@@ -1,11 +1,45 @@
 {
+  "name": "counter-fresh",
+  "version": "0.0.0",
+  "exports": "./main.ts",
+  "desktop": {
+    "app": {
+      "name": "Counter Fresh",
+      "identifier": "com.example.myapp",
+      "icons": {
+        "macos": "./icons/app.icns",
+        "windows": "./icons/app.ico",
+        "linux": "./icons/app.png"
+      },
+      "deepLinks": [
+        "counter-fresh"
+      ]
+    },
+    "backend": "cef",
+    "output": {
+      "macos": "./dist/CounterFresh.app",
+      "windows": "./dist/CounterFresh",
+      "linux": "./dist/counter-fresh"
+    },
+    "macos": {
+      "codesignIdentity": "Developer ID Application: Acme, Inc. (TEAMID)"
+    },
+    "release": {
+      "baseUrl": "https://releases.example.com/counter-fresh"
+    },
+    "errorReporting": {
+      "url": "https://errors.example.com/report"
+    }
+  },
   "nodeModulesDir": "manual",
   "tasks": {
     "check": "deno fmt --check . && deno lint . && deno check",
     "dev": "vite",
     "build": "vite build",
     "start": "deno serve -A _fresh/server.js",
-    "update": "deno run -A -r jsr:@fresh/update ."
+    "update": "deno run -A -r jsr:@fresh/update .",
+    "d-dev": "deno desktop --hmr -A .",
+    "d-build": "deno desktop -A ."
   },
   "lint": {
     "rules": {
@@ -34,6 +68,8 @@
       "dom",
       "dom.asynciterable",
       "dom.iterable",
+      "deno.window",
+      "deno.desktop",
       "deno.ns"
     ],
     "jsx": "precompile",
