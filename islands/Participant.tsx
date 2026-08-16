@@ -29,6 +29,9 @@ export default function Participant(
         id={useId()}
         type="text"
         value={participant.name}
+        onInput={(e) => {
+          participant.name.value = e.currentTarget.value;
+        }}
         placeholder="Name"
         autocapitalize="sentences"
         class={`capitalize text-center align-middle items-center font-mono text-2xl font-bold text-purple-200 tracking-wider mb-2`}

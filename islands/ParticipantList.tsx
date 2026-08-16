@@ -10,13 +10,7 @@ export interface ParticipantItem {
 }
 
 export default function ParticipantList() {
-  const participantItems = useSignal<ParticipantItem[]>([
-    { id: crypto.randomUUID(), name: signal("pomme"), count: signal(0) },
-    { id: crypto.randomUUID(), name: signal("poire"), count: signal(0) },
-    { id: crypto.randomUUID(), name: signal("prune"), count: signal(0) },
-    { id: crypto.randomUUID(), name: signal("fraise"), count: signal(5) },
-    { id: crypto.randomUUID(), name: signal("myrtille"), count: signal(0) },
-  ]);
+  const participantItems = useSignal<ParticipantItem[]>([]);
 
   // Track current display order for stable tie-breaking
   const currentSortedRef = useRef<ParticipantItem[]>([]);
