@@ -14,6 +14,17 @@ export default function CloseButton({
   size = 32,
 }: CloseButtonProps) {
   const isClosing = useSignal(false);
+  const isDesktop = useSignal(false);
+
+  useEffect(() => {
+    // Detect Deno desktop environment by checking for injected native bindings
+    if (
+      typeof bindings !== "undefined" &&
+      typeof bindings.closeWindow === "function"
+    ) {
+      isDesktop.value = true;
+    }
+  }, []);
 
   async function handleClose() {
     if (isClosing.value) return;
@@ -70,6 +81,11 @@ export default function CloseButton({
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Hide the close button completely when running in standard browser
+  if (!isDesktop.value) {
+    return null;
+  }
 
   const positionClass = position === "fixed"
     ? "fixed top-4 right-4 z-50"

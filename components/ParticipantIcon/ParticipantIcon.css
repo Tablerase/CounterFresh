@@ -23,7 +23,6 @@ button:hover #participant-core,
   transition: d 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
-
 .participant-box:hover #participant-head,
 #participant-core:hover #participant-head,
 button:hover #participant-head,

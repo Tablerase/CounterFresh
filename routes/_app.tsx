@@ -1,3 +1,4 @@
+import GlyphsBackground from "@/islands/GlyphsBackground.tsx";
 import { define } from "../utils.ts";
 import CloseButton from "@/islands/CloseButton.tsx";
 
@@ -22,6 +23,7 @@ export default define.page(function App({ Component }) {
       </head>
       <body>
         <CloseButton />
+        <GlyphsBackground />
         <Component />
       </body>
     </html>
