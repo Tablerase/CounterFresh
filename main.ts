@@ -5,6 +5,44 @@ export const app = new App<State>();
 
 app.use(staticFiles());
 
+// Manage native desktop window when running inside Deno desktop
+let mainWindow: Deno.BrowserWindow | null = null;
+if (
+  typeof (Deno as unknown as { BrowserWindow?: typeof Deno.BrowserWindow })
+    .BrowserWindow !== "undefined"
+) {
+  mainWindow = new Deno.BrowserWindow({
+    title: "Counter Fresh",
+  });
+
+  mainWindow.bind("closeWindow", () => {
+    mainWindow?.close();
+    return Promise.resolve();
+  });
+
+  mainWindow.bind("exitApp", () => {
+    Deno.exit(0);
+    return Promise.resolve();
+  });
+}
+
+// API endpoint to close window or exit app
+app.post("/api/close", () => {
+  if (mainWindow) {
+    mainWindow.close();
+  } else if (
+    typeof (Deno as unknown as { exit?: (code?: number) => void }).exit ===
+      "function"
+  ) {
+    try {
+      Deno.exit(0);
+    } catch (e) {
+      console.warn("Could not call Deno.exit:", e);
+    }
+  }
+  return Response.json({ success: true });
+});
+
 // Pass a shared value from a middleware
 app.use(async (ctx) => {
   ctx.state.shared = "hello";

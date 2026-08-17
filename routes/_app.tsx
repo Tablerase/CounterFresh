@@ -1,4 +1,5 @@
 import { define } from "../utils.ts";
+import CloseButton from "@/islands/CloseButton.tsx";
 
 export default define.page(function App({ Component }) {
   return (
@@ -20,6 +21,7 @@ export default define.page(function App({ Component }) {
         <title>CounterFresh</title>
       </head>
       <body>
+        <CloseButton />
         <Component />
       </body>
     </html>

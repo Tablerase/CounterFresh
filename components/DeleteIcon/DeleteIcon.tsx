@@ -1,11 +1,6 @@
+import { IconProps } from "@/components/CounterIcons/IconProps.tsx";
 import { useId } from "preact/hooks";
 import "./DeleteIcon.css";
-
-export interface IconProps {
-  width?: number | string;
-  height?: number | string;
-  class?: string;
-}
 
 export default function DeleteIcon({
   width = 32,

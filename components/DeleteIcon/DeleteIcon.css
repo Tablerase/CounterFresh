@@ -34,7 +34,8 @@ button:hover .mask-bg,
   stroke-width: 2.5px;
   stroke-linecap: round;
   transform-origin: center;
-  transition: stroke 0.4s ease, stroke-width 0.4s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: stroke 0.4s ease, stroke-width 0.4s ease, transform 0.5s
+    cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 button:hover .mask-cross,

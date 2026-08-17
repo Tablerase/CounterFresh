@@ -1,0 +1,46 @@
+:root {
+  --add-participant-color: white;
+}
+
+#participant-core {
+  stroke-width: 5;
+  stroke: var(--add-participant-color);
+}
+
+.participant-box:hover #participant-core,
+#participant-core:hover #participant-core,
+button:hover #participant-core,
+.group:hover #participant-core {
+  stroke-width: 3;
+  transition: stroke 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+#participant-head {
+  /* Rest: Travels down to (16, 26) and back up to (16, 6), matching the circle's closed loop topology */
+  d: path("M 16 6 C 16 6 16 26 16 26 C 16 26 16 6 16 6");
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: d 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+
+.participant-box:hover #participant-head,
+#participant-core:hover #participant-head,
+button:hover #participant-head,
+.group:hover #participant-head {
+  d: path("M 16 4 C 10 4 10 12 16 12 C 22 12 22 4 16 4");
+  transition: d 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#participant-body {
+  d: path("M 6 16 C 12 16 22 16 26 16");
+  transition: d 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.participant-box:hover #participant-body,
+#participant-core:hover #participant-body,
+button:hover #participant-body,
+.group:hover #participant-body {
+  d: path("M 8 28 C 6 12 26 12 24 28");
+  transition: d 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}

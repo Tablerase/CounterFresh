@@ -1,10 +1,5 @@
 import "./CounterIcon.css";
-
-export interface IconProps {
-  width?: number | string;
-  height?: number | string;
-  class?: string;
-}
+import { IconProps } from "@/components/CounterIcons/IconProps.tsx";
 
 export default function PlusIcon({
   width = 32,

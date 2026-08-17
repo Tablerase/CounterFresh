@@ -9,7 +9,7 @@
       "icons": {
         "macos": "./icons/app.icns",
         "windows": "./icons/app.ico",
-        "linux": "./icons/app.png"
+        "linux": "./static/counter-logo@2x.png"
       },
       "deepLinks": [
         "counter-fresh"
@@ -91,7 +91,8 @@
       "template"
     ],
     "types": [
-      "vite/client"
+      "vite/client",
+      "./bindings.d.ts"
     ]
   }
 }

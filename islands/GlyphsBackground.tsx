@@ -65,7 +65,8 @@ function getRandomChar(): string {
 
 function getThemeVar(name: string, fallback: string): string {
   if (typeof document === "undefined") return fallback;
-  const val = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const val = getComputedStyle(document.documentElement).getPropertyValue(name)
+    .trim();
   return val || fallback;
 }
 
@@ -204,8 +205,8 @@ export default function GlyphsBackground() {
     const tints = getThemeTints();
 
     const handleResize = () => {
-      const W = window.innerWidth;
-      const H = window.innerHeight;
+      const W = globalThis.innerWidth;
+      const H = globalThis.innerHeight;
 
       mainCanvas.width = W;
       mainCanvas.height = H;
@@ -221,7 +222,11 @@ export default function GlyphsBackground() {
       const numCols = Math.ceil(W / CONFIG.grid.columnGap);
       columns = Array.from(
         { length: numCols },
-        (_, i) => createColumn(i * CONFIG.grid.columnGap + CONFIG.grid.columnGap / 2, tints),
+        (_, i) =>
+          createColumn(
+            i * CONFIG.grid.columnGap + CONFIG.grid.columnGap / 2,
+            tints,
+          ),
       );
     };
 
@@ -239,7 +244,14 @@ export default function GlyphsBackground() {
       mainCtx.globalCompositeOperation = "destination-out";
       for (const col of columns) {
         const radius = effects.spotlightRadius;
-        const grad = mainCtx.createRadialGradient(col.x, col.y, 0, col.x, col.y, radius);
+        const grad = mainCtx.createRadialGradient(
+          col.x,
+          col.y,
+          0,
+          col.x,
+          col.y,
+          radius,
+        );
         grad.addColorStop(0, "rgba(0,0,0,0.85)");
         grad.addColorStop(0.5, "rgba(0,0,0,0.35)");
         grad.addColorStop(1, "rgba(0,0,0,0)");
@@ -276,12 +288,15 @@ export default function GlyphsBackground() {
             mainCtx.shadowBlur = 0;
           } else if (frac < effects.brightTrailRatio) {
             mainCtx.shadowBlur = 0;
-            const alpha = (1 - frac / effects.brightTrailRatio) * effects.maxMidAlpha;
+            const alpha = (1 - frac / effects.brightTrailRatio) *
+              effects.maxMidAlpha;
             mainCtx.fillStyle = tint.mid(alpha);
             mainCtx.fillText(glyphs[i], col.x, cy);
           } else {
             mainCtx.shadowBlur = 0;
-            const alpha = (1 - (frac - effects.brightTrailRatio) / (1 - effects.brightTrailRatio)) * effects.maxDimAlpha;
+            const alpha = (1 -
+              (frac - effects.brightTrailRatio) /
+                (1 - effects.brightTrailRatio)) * effects.maxDimAlpha;
             mainCtx.fillStyle = tint.dim(alpha);
             mainCtx.fillText(glyphs[i], col.x, cy);
           }
@@ -292,7 +307,8 @@ export default function GlyphsBackground() {
 
         // Random character flicker
         if (Math.random() < colConfig.flickerChance) {
-          col.glyphs[Math.floor(Math.random() * glyphs.length)] = getRandomChar();
+          col.glyphs[Math.floor(Math.random() * glyphs.length)] =
+            getRandomChar();
         }
 
         // Reset column when past bottom boundary
@@ -309,12 +325,12 @@ export default function GlyphsBackground() {
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
+    globalThis.addEventListener("resize", handleResize);
     animId = requestAnimationFrame(renderFrame);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", handleResize);
+      globalThis.removeEventListener("resize", handleResize);
     };
   }, []);
 

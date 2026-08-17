@@ -2,6 +2,7 @@ import { Signal, signal, useComputed, useSignal } from "@preact/signals";
 import { useLayoutEffect, useRef } from "preact/hooks";
 import { Button } from "@/components/Button.tsx";
 import Participant from "@/islands/Participant.tsx";
+import ParticipantIcon from "@/components/ParticipantIcon/ParticipantIcon.tsx";
 
 export interface ParticipantItem {
   id: string;
@@ -10,7 +11,10 @@ export interface ParticipantItem {
 }
 
 export default function ParticipantList() {
-  const participantItems = useSignal<ParticipantItem[]>([]);
+  const participantItems = useSignal<ParticipantItem[]>([
+    { id: crypto.randomUUID(), name: signal(""), count: signal(0) },
+    { id: crypto.randomUUID(), name: signal(""), count: signal(0) },
+  ]);
 
   // Track current display order for stable tie-breaking
   const currentSortedRef = useRef<ParticipantItem[]>([]);
@@ -130,7 +134,7 @@ export default function ParticipantList() {
         onClick={addParticipant}
         class="font-bold text-6xl text-neutral-50"
       >
-        +
+        <ParticipantIcon />
       </Button>
     </div>
   );
