@@ -1,6 +1,6 @@
-# Counter Fresh v0.0.0 - Initial Release 🎉
+# Changelog
 
-## 🚀 Features
+## v0.0.0 - Initial Release
 
 - Live Sorting & Leaderboard with FLIP animations
 - Hold-to-delete participant safety animation
