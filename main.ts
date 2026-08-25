@@ -15,30 +15,50 @@ if (
     title: "Counter Fresh",
   });
 
+  const terminateProcess = () => {
+    try {
+      mainWindow?.close();
+    } catch {
+      // ignore
+    }
+    setTimeout(() => {
+      if (Deno.env.get("DENO_TESTING") === "1") return;
+      try {
+        Deno.exit(0);
+      } catch (e) {
+        console.warn("Could not call Deno.exit:", e);
+      }
+    }, 20);
+  };
+
   mainWindow.bind("closeWindow", () => {
-    mainWindow?.close();
+    terminateProcess();
     return Promise.resolve();
   });
 
   mainWindow.bind("exitApp", () => {
-    Deno.exit(0);
+    terminateProcess();
+    return Promise.resolve();
   });
 }
 
 // API endpoint to close window or exit app
 app.post("/api/close", () => {
-  if (mainWindow) {
-    mainWindow.close();
-  } else if (
-    typeof (Deno as unknown as { exit?: (code?: number) => void }).exit ===
-      "function"
-  ) {
+  setTimeout(() => {
+    try {
+      if (mainWindow) {
+        mainWindow.close();
+      }
+    } catch {
+      // ignore
+    }
+    if (Deno.env.get("DENO_TESTING") === "1") return;
     try {
       Deno.exit(0);
     } catch (e) {
       console.warn("Could not call Deno.exit:", e);
     }
-  }
+  }, 20);
   return Response.json({ success: true });
 });
 

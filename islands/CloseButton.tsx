@@ -24,21 +24,36 @@ export default function CloseButton({
     ) {
       isDesktop.value = true;
     }
+
+    // Ensure dev server terminates if window is closed via OS window frame
+    const handleUnload = () => {
+      try {
+        navigator.sendBeacon("/api/close");
+      } catch {
+        fetch("/api/close", { method: "POST" }).catch(() => {});
+      }
+    };
+    globalThis.addEventListener("pagehide", handleUnload);
+    globalThis.addEventListener("beforeunload", handleUnload);
+    return () => {
+      globalThis.removeEventListener("pagehide", handleUnload);
+      globalThis.removeEventListener("beforeunload", handleUnload);
+    };
   }, []);
 
   async function handleClose() {
     if (isClosing.value) return;
     isClosing.value = true;
 
-    // 1. Try Deno desktop native webview bindings
+    // 1. Notify server immediately to terminate dev server process
     try {
-      if (
-        typeof bindings !== "undefined" &&
-        typeof bindings.closeWindow === "function"
-      ) {
-        await bindings.closeWindow();
-        return;
-      }
+      fetch("/api/close", { method: "POST" }).catch(() => {});
+    } catch {
+      // ignore
+    }
+
+    // 2. Try Deno desktop native webview bindings
+    try {
       if (
         typeof bindings !== "undefined" &&
         typeof bindings.exitApp === "function"
@@ -46,16 +61,15 @@ export default function CloseButton({
         await bindings.exitApp();
         return;
       }
+      if (
+        typeof bindings !== "undefined" &&
+        typeof bindings.closeWindow === "function"
+      ) {
+        await bindings.closeWindow();
+        return;
+      }
     } catch (e) {
       console.warn("Failed to close via Deno desktop bindings:", e);
-    }
-
-    // 2. Fallback to server API endpoint
-    try {
-      const response = await fetch("/api/close", { method: "POST" });
-      if (response.ok) return;
-    } catch (e) {
-      console.warn("Failed to close via /api/close route:", e);
     }
 
     // 3. Fallback to browser window.close()

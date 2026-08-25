@@ -116,13 +116,17 @@ CounterFresh/
 │   ├── Counter.tsx         # Score increment/decrement island
 │   ├── GlyphsBackground.tsx# Animated canvas background
 │   ├── Participant.tsx     # Participant card with hold-to-delete logic
-│   └── ParticipantList.tsx # FLIP-animated leaderboard list
+│   ├── Participant_test.ts # Colocated unit tests for hold-to-delete
+│   ├── ParticipantList.tsx # FLIP-animated leaderboard list
+│   └── ParticipantList_test.ts # Colocated unit tests for leaderboard sorting
 ├── routes/                 # File-system routing
 │   ├── api/                # API route handlers
 │   │   └── [name].tsx      # Sample API handler
 │   ├── _app.tsx            # Global HTML document shell & background mounting
 │   ├── about.tsx           # About page
 │   └── index.tsx           # Home page
+├── tests/                  # Integration & server endpoint test suites
+│   └── api_test.ts         # API route & shutdown handler integration tests
 ├── static/                 # Static public assets (favicons, logos)
 ├── icons/                  # Application icons for desktop builds
 ├── bindings.d.ts           # Desktop native bindings TypeScript definitions
@@ -179,6 +183,14 @@ Launches the application in a desktop window with HMR:
 
 ```bash
 deno task d-dev
+```
+
+### Running Tests
+
+Run the test suite across unit calculations, sorting logic, and API endpoints:
+
+```bash
+deno task test
 ```
 
 ### Formatting & Type Checks
