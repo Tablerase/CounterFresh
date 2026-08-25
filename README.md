@@ -2,10 +2,25 @@
 
 # Counter Fresh
 
-<p align="center">
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/2a4f5beb-96e8-42fb-beb3-d41a4ec036bc" alt="Counter Fresh Demo Tour" width="100%" />
+
+<details>
+
+<summary>High Resolution Preview</summary>
+    
+<video src="https://github.com/user-attachments/assets/83ea31da-64ff-4574-a712-20ff6e37805f" controls="controls" width="100%"></video>
+    
+</details>
+
+</div>
+
+
+
+<div align="center">
   <strong>An animated multi-participant score tracker and tally counter.</strong><br />
   Built with <strong>Fresh 2</strong>, <strong>Preact Signals</strong>, and <strong>Tailwind CSS v4</strong>, runnable on the <strong>Web</strong> and as a <strong>Desktop</strong> app via <strong>Deno</strong>.
-</p>
+</div>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Deno-2.x-000000?logo=deno&logoColor=white" alt="Deno 2.x" />
@@ -47,19 +62,6 @@
 
 ---
 
-## ![Tech Stack](https://api.iconify.design/tabler/stack-2.svg?color=%2390b0f7&height=22) Tech Stack
-
-| Layer                    | Technology                                                                                     |
-| ------------------------ | ---------------------------------------------------------------------------------------------- |
-| **Runtime & Toolchain**  | [Deno 2](https://deno.com/)                                                                    |
-| **Web Framework**        | [Fresh 2](https://fresh.deno.dev/) (`@fresh/core`, `@fresh/plugin-vite`)                       |
-| **UI Library**           | [Preact](https://preactjs.com/) + [`@preact/signals`](https://preactjs.com/guide/v10/signals/) |
-| **Desktop Shell**        | [Deno Desktop](https://docs.deno.com/) (Chromium Embedded Framework backend)                   |
-| **Dev Server & Bundler** | [Vite 7](https://vitejs.dev/)                                                                  |
-| **Styling**              | [Tailwind CSS v4](https://tailwindcss.com/) + `@tailwindcss/vite`                              |
-
----
-
 ## ![Engineering](https://api.iconify.design/tabler/cpu.svg?color=%2390b0f7&height=22) Animation & Mechanics Implementation
 
 <p align="center">
@@ -91,6 +93,20 @@ without external animation dependencies:
   grid and frame guides are drawn once to an offscreen canvas. The active canvas
   renders falling glyphs and uses `destination-out` composite operations for
   radial spotlight masking.
+
+---
+
+## ![Tech Stack](https://api.iconify.design/tabler/stack-2.svg?color=%2390b0f7&height=22) Tech Stack
+
+| Layer                    | Technology                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| **Runtime & Toolchain**  | [Deno 2](https://deno.com/)                                                                    |
+| **Web Framework**        | [Fresh 2](https://fresh.deno.dev/) (`@fresh/core`, `@fresh/plugin-vite`)                       |
+| **UI Library**           | [Preact](https://preactjs.com/) + [`@preact/signals`](https://preactjs.com/guide/v10/signals/) |
+| **Desktop Shell**        | [Deno Desktop](https://docs.deno.com/) (Chromium Embedded Framework backend)                   |
+| **Dev Server & Bundler** | [Vite 7](https://vitejs.dev/)                                                                  |
+| **Styling**              | [Tailwind CSS v4](https://tailwindcss.com/) + `@tailwindcss/vite`                              |
+
 
 ---
 
@@ -167,6 +183,8 @@ cd CounterFresh
 # Install dependencies (Deno will cache them automatically)
 deno install
 ```
+
+<video src="https://github.com/user-attachments/assets/7ea224a6-d477-438f-a4a3-0a0d44e36b71" controls="controls" width="100%"></video>
 
 ---
 
@@ -279,8 +297,11 @@ Desktop packaging options are configured under the `"desktop"` key in
 | **Cancel Deletion**    | Release before 850ms                                                                                         | Drains progress back to 0                                |
 | **Close Desktop App**  | Click top-right ✕ or press <kbd>Esc</kbd>                                                                    | Closes the window / exits the application                |
 
+
+<!--
 ---
 
 ## ![License](https://api.iconify.design/tabler/certificate.svg?color=%23b5a4f0&height=22) License
 
 This project is open-source. See the repository license for details.
+--!>
