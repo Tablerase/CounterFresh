@@ -8,14 +8,12 @@
 <details>
 
 <summary>High Resolution Preview</summary>
-    
+
 <video src="https://github.com/user-attachments/assets/83ea31da-64ff-4574-a712-20ff6e37805f" controls="controls" width="100%"></video>
-    
+
 </details>
 
 </div>
-
-
 
 <div align="center">
   <strong>An animated multi-participant score tracker and tally counter.</strong><br />
@@ -106,7 +104,6 @@ without external animation dependencies:
 | **Desktop Shell**        | [Deno Desktop](https://docs.deno.com/) (Chromium Embedded Framework backend)                   |
 | **Dev Server & Bundler** | [Vite 7](https://vitejs.dev/)                                                                  |
 | **Styling**              | [Tailwind CSS v4](https://tailwindcss.com/) + `@tailwindcss/vite`                              |
-
 
 ---
 
@@ -296,7 +293,6 @@ Desktop packaging options are configured under the `"desktop"` key in
 | **Delete Participant** | **Hold** the ![Delete](https://api.iconify.design/tabler/trash.svg?color=%23ef4444&height=16) button (850ms) | Fills progress bar and shakes before confirming deletion |
 | **Cancel Deletion**    | Release before 850ms                                                                                         | Drains progress back to 0                                |
 | **Close Desktop App**  | Click top-right ✕ or press <kbd>Esc</kbd>                                                                    | Closes the window / exits the application                |
-
 
 <!--
 ---

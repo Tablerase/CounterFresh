@@ -39,6 +39,7 @@
     "npm:@prefresh/vite@^2.4.8": "2.4.12_preact@10.29.8__preact-render-to-string@6.7.0_vite@7.3.6_preact-render-to-string@6.7.0__preact@10.29.8",
     "npm:@remix-run/node-fetch-server@0.12": "0.12.0",
     "npm:@tailwindcss/vite@^4.1.12": "4.3.3_vite@7.3.6",
+    "npm:@types/babel__core@^7.20.5": "7.20.5",
     "npm:esbuild-wasm@~0.25.11": "0.25.12",
     "npm:esbuild@0.25.7": "0.25.7",
     "npm:esbuild@~0.25.5": "0.25.12",
@@ -110,6 +111,7 @@
         "npm:@babel/preset-react",
         "npm:@prefresh/vite",
         "npm:@remix-run/node-fetch-server",
+        "npm:@types/babel__core",
         "npm:rollup",
         "npm:vite@^7.1.4"
       ]
