@@ -21,9 +21,6 @@
       "windows": "./dist/CounterFresh",
       "linux": "./dist/counter-fresh"
     },
-    "macos": {
-      "codesignIdentity": "Developer ID Application: Acme, Inc. (TEAMID)"
-    },
     "release": {
       "baseUrl": "https://releases.example.com/counter-fresh"
     },
