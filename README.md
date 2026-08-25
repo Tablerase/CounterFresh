@@ -159,8 +159,13 @@ irm https://deno.land/install.ps1 | iex
 Clone the repository and enter the directory:
 
 ```bash
-git clone https://github.com/your-username/CounterFresh.git
+git clone https://github.com/Tablerase/CounterFresh.git
 cd CounterFresh
+```
+
+```bash
+# Install dependencies (Deno will cache them automatically)
+deno install
 ```
 
 ---
