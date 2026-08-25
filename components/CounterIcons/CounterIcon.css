@@ -5,62 +5,60 @@
 
 /* Minus */
 
-#minus-core {
+.minus-core {
   stroke-width: 2;
-  stroke: var(--minus-color);
+  stroke: var(--minus-color, #c5b5ff);
   transform-origin: center;
-
   transition: transform 0.4s ease-out;
 }
 
 /* Trigger on SVG hover, parent button hover, or group hover */
-#minus-box:hover #minus-core,
-button:hover #minus-core,
-.group:hover #minus-core {
+.minus-box:hover .minus-core,
+button:hover .minus-core,
+.group:hover .minus-core {
   transform: rotate(90deg);
-
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#arrow-bottom,
-#arrow-top {
+.arrow-bottom,
+.arrow-top {
   stroke-dashoffset: 25;
   stroke-dasharray: 25;
   transition: stroke-dashoffset 0.4s ease-in-out 0.3s;
 }
 
-#minus-box:hover #arrow-bottom,
-#minus-box:hover #arrow-top,
-button:hover #arrow-bottom,
-button:hover #arrow-top,
-.group:hover #arrow-bottom,
-.group:hover #arrow-top {
+.minus-box:hover .arrow-bottom,
+.minus-box:hover .arrow-top,
+button:hover .arrow-bottom,
+button:hover .arrow-top,
+.group:hover .arrow-bottom,
+.group:hover .arrow-top {
   stroke-dashoffset: 0;
 }
 
 /* Plus */
 
-#plus-core {
-  stroke: var(--plus-color);
+.plus-core {
+  stroke: var(--plus-color, #a5c1ff);
   stroke-width: 2;
   transform-origin: center;
   transition: transform 0.4s ease-out;
 }
 
-#plus-box:hover #plus-core,
-button:hover #plus-core,
-.group:hover #plus-core {
+.plus-box:hover .plus-core,
+button:hover .plus-core,
+.group:hover .plus-core {
   transform: rotate(-90deg);
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#plus-arrow-head {
+.plus-arrow-head {
   d: path("M 16 10 L 16 16 L 16 22");
   transition: d 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
 }
 
-#plus-box:hover #plus-arrow-head,
-button:hover #plus-arrow-head,
-.group:hover #plus-arrow-head {
+.plus-box:hover .plus-arrow-head,
+button:hover .plus-arrow-head,
+.group:hover .plus-arrow-head {
   d: path("M 22 12 L 26 16 L 22 20");
 }

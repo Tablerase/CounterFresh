@@ -22,7 +22,6 @@ if (
 
   mainWindow.bind("exitApp", () => {
     Deno.exit(0);
-    return Promise.resolve();
   });
 }
 

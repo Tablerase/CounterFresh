@@ -25,7 +25,10 @@ export default function HoldDeleteButton({
   const progressRef = useRef(0);
   progressRef.current = progress;
 
-  const gradientId = useId();
+  const rawGradientId = useId();
+  const gradientId = `hold-gradient-${
+    rawGradientId.replace(/[^a-zA-Z0-9_-]/g, "")
+  }`;
 
   // Cleanup animation frame on unmount
   useEffect(() => {

@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @import "tailwindcss";
+@import "../components/CounterIcons/CounterIcon.css";
+@import "../components/DeleteIcon/DeleteIcon.css";
+@import "../components/ParticipantIcon/ParticipantIcon.css";
 
 .righteous-regular {
   font-family: "Righteous", sans-serif;
