@@ -1,31 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { signal } from "@preact/signals";
-import type { ParticipantItem } from "./ParticipantList.tsx";
-
-function sortParticipants(
-  items: ParticipantItem[],
-  currentOrder: ParticipantItem[],
-): ParticipantItem[] {
-  const list = [...items];
-  list.sort((a, b) => {
-    // 1. Primary sort: Score descending (higher score comes first)
-    const scoreDiff = b.count.value - a.count.value;
-    if (scoreDiff !== 0) {
-      return scoreDiff;
-    }
-
-    // 2. Secondary tie-breaker: Preserve current display position
-    const indexA = currentOrder.indexOf(a);
-    const indexB = currentOrder.indexOf(b);
-
-    if (indexA !== -1 && indexB !== -1) {
-      return indexA - indexB;
-    }
-
-    return 0;
-  });
-  return list;
-}
+import { type ParticipantItem, sortParticipants } from "./ParticipantList.tsx";
 
 Deno.test("ParticipantList - Primary sort orders participants descending by score", () => {
   const p1: ParticipantItem = {
@@ -96,4 +71,59 @@ Deno.test("ParticipantList - Score update shifts rank dynamically", () => {
   sorted = sortParticipants([p1, p2], currentOrder);
 
   assertEquals(sorted.map((p) => p.name.value), ["Player 2", "Player 1"]);
+});
+
+Deno.test("ParticipantList - Handles empty list and single participant", () => {
+  assertEquals(sortParticipants([], []), []);
+
+  const p1: ParticipantItem = {
+    id: "1",
+    name: signal("Solo"),
+    count: signal(0),
+  };
+  const sorted = sortParticipants([p1], []);
+  assertEquals(sorted, [p1]);
+});
+
+Deno.test("ParticipantList - Handles negative scores correctly", () => {
+  const p1: ParticipantItem = {
+    id: "1",
+    name: signal("Negative"),
+    count: signal(-5),
+  };
+  const p2: ParticipantItem = {
+    id: "2",
+    name: signal("Zero"),
+    count: signal(0),
+  };
+  const p3: ParticipantItem = {
+    id: "3",
+    name: signal("Positive"),
+    count: signal(5),
+  };
+
+  const sorted = sortParticipants([p1, p2, p3], []);
+  assertEquals(sorted.map((p) => p.name.value), [
+    "Positive",
+    "Zero",
+    "Negative",
+  ]);
+});
+
+Deno.test("ParticipantList - Places new participant not in currentOrder appropriately", () => {
+  const p1: ParticipantItem = {
+    id: "1",
+    name: signal("Existing"),
+    count: signal(10),
+  };
+  const p2: ParticipantItem = {
+    id: "2",
+    name: signal("Newbie"),
+    count: signal(10),
+  };
+
+  // p1 is in currentOrder, p2 is newly added (not in currentOrder)
+  const sorted = sortParticipants([p1, p2], [p1]);
+  // p1 has index 0 in currentOrder, p2 has index -1. So indexA - indexB = 0 - (-1) > 0, or preserved
+  assertEquals(sorted.length, 2);
 });

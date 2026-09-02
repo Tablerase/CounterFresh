@@ -10,6 +10,33 @@ export interface ParticipantItem {
   count: Signal<number>;
 }
 
+export function sortParticipants(
+  items: ParticipantItem[],
+  currentOrder: ParticipantItem[],
+): ParticipantItem[] {
+  const list = [...items];
+
+  list.sort((a, b) => {
+    // 1. Primary sort: Score descending (higher score comes first)
+    const scoreDiff = b.count.value - a.count.value;
+    if (scoreDiff !== 0) {
+      return scoreDiff;
+    }
+
+    // 2. Secondary tie-breaker: Preserve CURRENT display position!
+    const indexA = currentOrder.indexOf(a);
+    const indexB = currentOrder.indexOf(b);
+
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+
+    return 0;
+  });
+
+  return list;
+}
+
 export default function ParticipantList() {
   const participantItems = useSignal<ParticipantItem[]>([
     { id: crypto.randomUUID(), name: signal(""), count: signal(0) },
@@ -21,26 +48,10 @@ export default function ParticipantList() {
 
   // Sorts cards by score descending. On equal scores, keeps current display order (no swap on ties!)
   const sortedParticipants = useComputed(() => {
-    const items = [...participantItems.value];
-
-    items.sort((a, b) => {
-      // 1. Primary sort: Score descending (higher score comes first)
-      const scoreDiff = b.count.value - a.count.value;
-      if (scoreDiff !== 0) {
-        return scoreDiff;
-      }
-
-      // 2. Secondary tie-breaker: Preserve CURRENT display position!
-      const indexA = currentSortedRef.current.indexOf(a);
-      const indexB = currentSortedRef.current.indexOf(b);
-
-      if (indexA !== -1 && indexB !== -1) {
-        return indexA - indexB;
-      }
-
-      return 0;
-    });
-
+    const items = sortParticipants(
+      participantItems.value,
+      currentSortedRef.current,
+    );
     currentSortedRef.current = items;
     return items;
   });

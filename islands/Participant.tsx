@@ -10,6 +10,33 @@ export interface ParticipantProps {
   onRemove?: () => void;
 }
 
+export const HOLD_DURATION = 850; // ms to charge and validate deletion
+export const DRAIN_MAX_DURATION = 240; // ms max duration to drain back to 0
+
+export function calculateHoldProgress(
+  elapsedMs: number,
+  holdDuration: number = HOLD_DURATION,
+): number {
+  return Math.min(1, Math.max(0, elapsedMs / holdDuration));
+}
+
+export function calculateDrainProgress(
+  initialProgress: number,
+  drainElapsedMs: number,
+  maxDrainDuration: number = DRAIN_MAX_DURATION,
+): number {
+  const drainDuration = initialProgress * maxDrainDuration;
+  if (drainDuration <= 0) return 0;
+  const fraction = Math.min(1, drainElapsedMs / drainDuration);
+  return Math.max(0, initialProgress * (1 - fraction));
+}
+
+export function getShakeClass(progress: number): string {
+  if (progress > 0.65) return "animate-card-shake-intense";
+  if (progress > 0.35) return "animate-card-shake-mild";
+  return "";
+}
+
 export default function Participant(
   { participant, showRemove = false, onRemove }: ParticipantProps,
 ) {
@@ -22,8 +49,6 @@ export default function Participant(
   const startTimeRef = useRef<number>(0);
   const progressRef = useRef(0);
   progressRef.current = progress;
-
-  const HOLD_DURATION = 850; // ms to charge and validate deletion
 
   useEffect(() => {
     return () => {
@@ -45,7 +70,7 @@ export default function Participant(
 
     const step = (now: number) => {
       const elapsed = now - startTimeRef.current;
-      const nextProgress = Math.min(1, elapsed / HOLD_DURATION);
+      const nextProgress = calculateHoldProgress(elapsed, HOLD_DURATION);
       setProgress(nextProgress);
 
       if (nextProgress >= 1) {
@@ -78,15 +103,17 @@ export default function Participant(
 
     // Smoothly drain / rewind progress back to 0
     const drainStartTime = performance.now();
-    const drainDuration = currentProg * 240;
 
     const drainStep = (now: number) => {
       const elapsed = now - drainStartTime;
-      const fraction = Math.min(1, elapsed / (drainDuration || 1));
-      const remainingProgress = currentProg * (1 - fraction);
+      const remainingProgress = calculateDrainProgress(
+        currentProg,
+        elapsed,
+        DRAIN_MAX_DURATION,
+      );
       setProgress(remainingProgress);
 
-      if (fraction < 1 && remainingProgress > 0) {
+      if (remainingProgress > 0) {
         reqIdRef.current = requestAnimationFrame(drainStep);
       } else {
         setProgress(0);
@@ -97,11 +124,7 @@ export default function Participant(
   };
 
   // Card shake intensity classes based on charge level
-  const shakeClass = progress > 0.65
-    ? "animate-card-shake-intense"
-    : progress > 0.35
-    ? "animate-card-shake-mild"
-    : "";
+  const shakeClass = getShakeClass(progress);
 
   // Dynamic card border and glow based on charge progress
   const dynamicSurfaceStyle = progress > 0

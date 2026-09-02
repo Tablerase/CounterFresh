@@ -41,3 +41,15 @@ Deno.test("API Handler - routes/api/[name].tsx handles GET with name parameter",
   const text = await res.text();
   assertEquals(text, "Hello, Developer!");
 });
+
+Deno.test("API Handler - routes/api/[name].tsx handles lowercase name", async () => {
+  // @ts-expect-error - mock context for unit testing route handler
+  const res = await nameApiHandler.GET({
+    params: { name: "bob" },
+    req: new Request("http://localhost:5173/api/bob"),
+  });
+
+  assertEquals(res.status, 200);
+  const text = await res.text();
+  assertEquals(text, "Hello, Bob!");
+});
